@@ -1,74 +1,92 @@
-# 📝 Task Manager (MERN Stack)
+# MERN Stack Stripe Checkout Application
 
-A full-stack task management application built using the **MERN stack**, featuring authentication, task assignment, pagination, and a clean modern UI.
-
----
-
-## 🚀 Features
-
-- User authentication (JWT + HttpOnly cookies)
-- Protected and public routes
-- Create, update, delete tasks
-- Assign tasks to users
-- Task status & priority management
-- Server-side pagination & sorting
-- Clean UI built with shadcn + Tailwind
-- Global loading and error handling
+This project implements a **simple checkout flow using Stripe** in a **MERN stack** application.  
+It allows users to browse products, add them to a cart, and complete payments securely using **Stripe Checkout**, with **server-side payment verification via Stripe webhooks**.
 
 ---
 
-## 🛠️ Tech Stack
+## 🚀 Tech Stack
 
 ### Frontend
-- React (Vite)
+- React
 - TypeScript
-- React Router DOM
 - Tailwind CSS
-- shadcn/ui
 - Axios
-- React Toastify
 
 ### Backend
 - Node.js
 - Express.js
-- MongoDB
-- Mongoose
-- JWT Authentication
-- HttpOnly Cookies
+- MongoDB (Mongoose)
+- Stripe API
 
 ---
 
+## ✨ Features
 
-## ⚙️ Prerequisites
-
-Make sure you have the following installed:
-
-- Node.js (v18+ recommended)
-- MongoDB (local or Atlas)
-- npm or yarn
+- Product listing using mock data
+- Add to cart functionality
+- Cart item count indicator
+- Checkout page with mandatory email input
+- Secure Stripe Checkout redirect
+- Server-side payment verification using Stripe webhooks
+- Order tracking in MongoDB
+- Success & failure payment handling
 
 ---
 
-## 🔧 Environment Variables
+## 🔐 Payment Flow (High Level)
 
-### Backend (`server/.env`)
-Create a `.env` file inside the `server` folder:
-Add these env vars:
-PORT=
-MONGO_URI=
-JWT_SECRET=
+1. User selects products and proceeds to checkout
+2. Frontend calls backend to create a Stripe Checkout Session
+3. User is redirected to Stripe-hosted checkout page
+4. Stripe processes the payment
+5. Stripe sends a webhook event to backend
+6. Backend verifies webhook signature
+7. Order status is saved/updated in database
+8. User is redirected to success or failure page
+
+> ⚠️ Payment confirmation is **never trusted from the frontend** and is always verified using Stripe webhooks.
+
+---
+
+## 📂 Project Structure
+
+root
+│
+├── client/ # React frontend
+│
+└── server/ # Node + Express backend
+├── routes
+├── controllers
+├── models
+└── config
 
 
+---
 
-##  Start server
+## ⚙️ Environment Variables
+
+Create a `.env` file inside the `server` directory:
+
+```env
+PORT=8800
+MONGO_URI=your_mongodb_connection_string
+STRIPE_SECRET_KEY=your_stripe_secret_key
+STRIPE_WEBHOOK_SECRET=your_stripe_webhook_secret
+CLIENT_URL=http://localhost:5173
+
+## Start server
 cd server
 npm install
 npm run dev
-
 
 ##  Start React app
 Open a new terminal:
 cd client
 npm install
 npm run dev
+
+## Webhook
+To test webhooks locally, use Stripe CLI:
+stripe listen --forward-to localhost:8800/api/stripe/webhook
 
